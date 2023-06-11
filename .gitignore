@@ -1,0 +1,10 @@
+
+server/api_key.txt
+server/conversation
+*/__pycache__
+*/.idea
+example
+
+
+
+server/example.py
