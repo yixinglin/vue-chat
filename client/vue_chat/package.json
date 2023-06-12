@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build:prod": "vue-cli-service build"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.1.7",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
     "crypto-js": "^4.1.1",

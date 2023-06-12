@@ -54,4 +54,6 @@ def chatgpt_delete_chatbot(bot_name):
 
 if __name__ == '__main__':
     CORS(app)
-    app.run(host='0.0.0.0', port='5000')
+    port = 5000
+    print("PORT: ", port)
+    app.run(host='0.0.0.0', port=port)

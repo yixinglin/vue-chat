@@ -35,7 +35,6 @@ export default {
             // 比较输入的用户名和密码与预设的合法值
             axios.post("/login", this.form
             ).then(resp => {
-                console.log(resp.data)
                 if (resp.data.status == 200) {
                     // 登录成功，执行相应的操作
                     alert('登录成功');
