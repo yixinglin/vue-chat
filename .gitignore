@@ -1,6 +1,7 @@
 
 server/api_key.txt
-server/conversation
+server/conversation/*
+!/server/conversation/ChatBot01.json
 */__pycache__
 */.idea
 example
