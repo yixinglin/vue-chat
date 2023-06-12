@@ -3,7 +3,14 @@ from flask import Flask, request
 from flask_cors import CORS
 from chatbot import ChatBot_GPT3_5T
 import os
+from login import login
+
 app = Flask(__name__)
+
+@app.route('/login', methods=['POST'])
+def login_validate():
+    data = json.loads(request.data)
+    return login(**data)
 
 @app.route('/chat3_5', methods=['POST'])
 def chatgpt_request():

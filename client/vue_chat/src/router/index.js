@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ChatView from '../views/ChatView.vue'
+import LoginPage from '../views/LoginPage.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -16,6 +18,11 @@ const routes = [
     component: ChatView
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage
+  },
+  {
     path: '/about',
     name: 'about',
     // route level code-splitting
@@ -27,6 +34,28 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+let time = 1800*1000
+router.beforeEach((to, from, next) => {
+  let token = JSON.parse(localStorage.getItem('token'))
+  if (token) {
+    let newtime = new Date().getTime()
+    if(newtime-token.time>time) {
+      localStorage.removeItem('token')
+      next('/login')
+    } else {
+      next()
+    }
+  } else {
+    if (to.path=='/login') {
+      next()
+    } else {
+      alert('请先登录，再访问其他页面')
+      next('/login')
+    }
+  }
+
 })
 
 export default router
