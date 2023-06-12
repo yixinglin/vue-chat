@@ -3,8 +3,8 @@ import openai
 import os
 import json
 
-openai.api_key = "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"
-
+with open("api_key.txt", 'r') as f:
+    openai.api_key = f.read()
 
 class BaseChatBot:
 
@@ -33,8 +33,11 @@ class BaseChatBot:
             s = json.dumps(self.message_history)
             f.write(s)
 
-    def delete_message_history_file(self):
-        os.remove(self.filename)
+    # def delete_message_history_file(self):
+    #     if os.path.exists(self.filename):
+    #         os.remove(self.filename)
+    #     else:
+    #         raise FileNotFoundError
 
     def create_completion(self, index=0):
         response = openai.ChatCompletion.create(
