@@ -145,7 +145,7 @@ export default {
       var post_body = {
         "bot_name": this.activeChat.name,
         "temperature": 0.7,
-        "sys_prompt": "You are a teacher who teaches German.",
+        "sys_prompt": "You are a helpful assistant.",
         "prompt": content
       }
 
