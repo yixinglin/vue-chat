@@ -15,11 +15,12 @@
     </div>
     <div class="main">
       <div class="chat-header">
-        <img :src="activeChatAvatar" class="avatar" alt="Avatar" />
+        <!-- <img :src="activeChatAvatar" class="avatar" alt="Avatar" /> -->
         <span class="chat-name-header">{{ activeChatName }}</span>
       </div>
       <div class="chat-messages">
         <div v-for="(message, index) in activeChatMessages" :key="index" :class="getMessageClass(message)">
+          <img v-if="message.isSelf==false" :src="activeChatAvatar" class="avatar" alt="Avatar" />
           <div class="message-content">{{ message.content }}</div>
         </div>
       </div>
@@ -58,7 +59,8 @@ export default {
           messages: [
             { sender: '好友1', content: '你好', isSelf: false },
             { sender: '自己', content: '你好，有什么需要帮助的吗？', isSelf: true },
-          ]
+          ],
+          request_headers: {"Content-Type": "application/json;charset=utf-8"}
         },
       ],
       inputMessage: '',
@@ -144,13 +146,13 @@ export default {
       this.$message({ message: '回答中...' });
       var post_body = {
         "bot_name": this.activeChat.name,
-        "temperature": 0.7,
+        "temperature": this.temperature,
         "sys_prompt": "You are a helpful assistant.",
         "prompt": content
       }
 
       const currentChat = this.activeChat;
-      axios.post("/chat3_5", post_body).then(response => {
+      axios.post("/chat3_5", post_body, {headers: this.request_headers}).then(response => {
         var c = { sender: currentChat.name, content: response.data.content, isSelf: false };
         currentChat.messages.push(c);
       }).catch(error => {
@@ -189,7 +191,7 @@ export default {
       }
     },
     fetchConversations() {
-      axios.get("chat3_5/all_conversations")
+      axios.get("chat3_5/all_conversations", {headers: this.request_headers})
         .then(response => {
           this.convertConversationsAPIFormat(response.data);
         })
@@ -200,6 +202,7 @@ export default {
   },
   mounted() {
     this.fetchConversations();
+    this.temperature = parseFloat(localStorage.getItem("temperature"));
   }
 };
 </script>
@@ -279,6 +282,13 @@ export default {
   padding: 10px;
 }
 
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+
+}
+
 .message-self {
   display: flex;
   justify-content: flex-end;
@@ -291,7 +301,16 @@ export default {
   margin-bottom: 10px;
 }
 
-.message-content {
+.message-self .message-content {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #9fe657;
+  word-wrap: break-word;
+  max-width: 60%;
+  text-align: left;
+}
+
+.message-other .message-content {
   padding: 8px 12px;
   border-radius: 4px;
   background-color: #f5f5f5;

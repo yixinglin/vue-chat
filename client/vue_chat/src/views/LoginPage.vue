@@ -14,6 +14,12 @@
                 </el-form-item>
             </el-form>
         </div>
+                                                                         
+        <div class="block">
+            <span style="color:antiquewhite"> 温度 </span>
+            <el-slider v-model="temperature" :step="1" :format-tooltip="formatTooltip" vertical height="200px">
+            </el-slider>
+        </div>
     </div>
 </template>
   
@@ -23,17 +29,19 @@ export default {
     'name': 'LoginPage',
     data() {
         return {
+            temperature: 50,
             form: {
                 username: '',
                 password: ''
-            }
+            },
+            request_headers: { "Content-Type": "application/json;charset=utf-8" }
         };
     },
     methods: {
         login() {
             // 在这里执行登录验证的逻辑
             // 比较输入的用户名和密码与预设的合法值
-            axios.post("/login", this.form
+            axios.post("/login", this.form, { headers: this.request_headers }
             ).then(resp => {
                 if (resp.data.status == 200) {
                     // 登录成功，执行相应的操作
@@ -43,6 +51,7 @@ export default {
                         "time": new Date().getTime()
                     }
                     localStorage.setItem("token", JSON.stringify(token));
+                    localStorage.setItem("temperature", this.formatTooltip(this.temperature))
                     this.$router.push("/")
                 } else {
                     // 登录失败，显示错误信息
@@ -50,6 +59,9 @@ export default {
                 }
             })
 
+        },
+        formatTooltip(val) {
+            return (0.4+0.006*val).toFixed(2); 
         }
     }
 };
