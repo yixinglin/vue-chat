@@ -39,10 +39,21 @@ class BaseChatBot:
     #     else:
     #         raise FileNotFoundError
 
+    def limit_num_messages(self, messages: List):
+        textlen = 0
+        for i, m in enumerate(messages[::-1]):
+            textlen += len(m['content'])
+            if textlen >= 3600:
+                break
+        print("Text length: ", textlen)
+        start = len(messages)-i-1
+        return messages[start+1:]
+
     def create_completion(self, index=0):
+        msgs = self.limit_num_messages(self.message_history)
         response = openai.ChatCompletion.create(
             model=self.model,
-            messages=self.message_history,
+            messages=msgs,
             temperature=self.temperature
         )
         return {"role": response.choices[index].message["role"],
@@ -74,7 +85,7 @@ class ChatBot_GPT3_5T(BaseChatBot):
 
 if __name__ == '__main__':
 
-    cb = ChatBot_GPT3_5T("german_teacher", sys_prompt="You are a teacher teaching German.")
+    cb = ChatBot_GPT3_5T("中国律师", sys_prompt="You are a teacher teaching German.")
     print(cb.message_history)
     print(cb.query_all_chatbots())
     for i in range(100):
