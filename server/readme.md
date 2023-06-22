@@ -10,6 +10,7 @@ sudo apt-get update
 pip install openai
 pip install Flask
 pip install Flask-Cors
+pip install tiktoken
 ```
 Before running the server, please create a file named 
 `api_key.txt` where API KEY is stored. 

@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import base64
 from urllib.parse import unquote
-
+import nltk
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
@@ -12,6 +12,8 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+
+
     b64 = "5Y+C5pWw"
     text = base64.b64decode(b64)
     print(text.decode('utf-8'))

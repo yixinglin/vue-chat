@@ -27,7 +27,7 @@ def chatgpt_request():
 def chatgpt_history_request(bot_name):
     bot = ChatBot_GPT3_5T(bot_name)
     history = bot.query_history()
-    encoded = BaseChatBot.encodeContent(json.dumps(history))
+    encoded = BaseChatBot.encodeContent(json.dumps(history, ensure_ascii=False))
     return {"data": encoded}
 
 # 获得所有聊天角色
@@ -46,7 +46,7 @@ def chatgpt_query_all_conversations():
         history = botObj.query_history()
         conversations.append({"bot_name": botObj.bot_name, "history": history})
 
-    encoded = BaseChatBot.encodeContent(json.dumps(conversations))
+    encoded = BaseChatBot.encodeContent(json.dumps(conversations, ensure_ascii=False))
     return {"data": encoded}
 
 # Add a chatbot
