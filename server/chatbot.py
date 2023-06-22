@@ -1,7 +1,9 @@
+import base64
 from typing import List
 import openai
 import os
 import json
+from urllib.parse import unquote
 
 with open("api_key.txt", 'r') as f:
     openai.api_key = f.read()
@@ -43,7 +45,7 @@ class BaseChatBot:
         textlen = 0
         for i, m in enumerate(messages[::-1]):
             textlen += len(m['content'])
-            if textlen >= 3600:
+            if textlen >= 3500:
                 break
         print("Text length: ", textlen)
         start = len(messages)-i-1
@@ -68,6 +70,14 @@ class BaseChatBot:
         bots = [b.split('.')[0] for b in res]
         return bots
 
+    @staticmethod
+    def decodeContent(content):
+        text = base64.b64decode(content)
+        return text.decode('utf-8')
+
+    @staticmethod
+    def encodeContent(content):
+        return base64.b64encode(bytes(content, 'utf-8')).decode()
 
 class ChatBot_GPT3_5T(BaseChatBot):
     def __init__(self, bot_name, temperature=0.7, sys_prompt="You are a helpful assistant", *args, **kwargs):
@@ -75,11 +85,12 @@ class ChatBot_GPT3_5T(BaseChatBot):
                                               temperature=temperature, sys_prompt=sys_prompt)
 
     def send(self, prompt):
-        usr_msg = {"role": "user", "content": prompt}
+        usr_msg = {"role": "user", "content": self.decodeContent(prompt)}
         self.message_history.append(usr_msg)
         resp = self.create_completion(0)
         self.message_history.append(resp)
         self.update_message_history_to_file()
+        resp["content"] = self.encodeContent(resp["content"])
         return resp
 
 

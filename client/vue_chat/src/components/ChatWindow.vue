@@ -147,13 +147,13 @@ export default {
       var post_body = {
         "bot_name": this.activeChat.name,
         "temperature": this.temperature,
-        "sys_prompt": "You are a helpful assistant.",
-        "prompt": content
+        "sys_prompt": this.encodeContent("You are a helpful assistant."),
+        "prompt": this.encodeContent(content)
       }
-
       const currentChat = this.activeChat;
       axios.post("/chat3_5", post_body, {headers: this.request_headers}).then(response => {
-        var c = { sender: currentChat.name, content: response.data.content, isSelf: false };
+        var decoded = this.decodeContent(response.data.content);
+        var c = { sender: currentChat.name, content: decoded, isSelf: false };
         currentChat.messages.push(c);
       }).catch(error => {
         console.log(error);
@@ -162,8 +162,18 @@ export default {
         this.$message({ message: '回答完毕！', type: 'success' });
       })
     },
+    encodeContent(content) {
+      let b = btoa(unescape(encodeURIComponent(content)))  // base64
+      // console.log(b);
+      return b;
+    },
+    decodeContent(content) {
+      let c = decodeURIComponent(escape(window.atob(content))); // base64
+      // console.log(c);
+      return c;
+    },
     convertConversationsAPIFormat(data) {
-      const conversations = data['data'];
+      const conversations = JSON.parse(this.decodeContent(data['data']));
       this.chats = [];
       for (let index = 0; index < conversations.length; index++) {
         const bot = conversations[index];
