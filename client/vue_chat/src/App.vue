@@ -2,7 +2,7 @@
   <div id="app">
     <nav>
       <router-link to="/">Home</router-link> |
-      <router-link to="/chat">Chat</router-link> |
+      <router-link to="/chat">Chat 3.5T</router-link> |
       <router-link to="/about">About</router-link>
     </nav>
     <router-view/>

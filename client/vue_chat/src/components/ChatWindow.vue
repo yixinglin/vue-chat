@@ -10,7 +10,8 @@
       </el-menu>
       <el-input v-model="newContact" placeholder="请输入好友名称" clearable class="add-contact-input"
         @keydown.enter="addContact">
-        <el-button slot="append" @click="addContact">添加</el-button>
+        <!-- <el-button slot="append" @click="addContact">添加</el-button> -->
+        <el-button class="el-icon-plus" slot="append" @click="addContact"></el-button>
       </el-input>
     </div>
     <div class="main">
@@ -64,7 +65,8 @@ export default {
         },
       ],
       inputMessage: '',
-      newContact: ''
+      newContact: '',
+      system_prompt: 'You are a helpful assistant.',
     };
   },
   computed: {
@@ -119,38 +121,66 @@ export default {
       if (this.newContact.trim() === '') {
         return;
       }
+      this.$prompt(`请输入System Prompt。 例如，你是一名乐于助人的助理。`, "Tips", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        inputPlaceholder: "You are a helpful assistant."
+      }).then(({value})=> {
+        console.log(value);
+        const aIndex = this.chats.length % this.listAvatar.length;
+        if (value === null) {
+          this.system_prompt = "You are a helpful assistant.";
+        } else {
+          this.system_prompt = value;
+        }
 
-      const aIndex = this.chats.length % this.listAvatar.length;
-
-      const newChat = {
-        id: (this.chats.length + 1).toString(),
-        name: this.newContact,
-        avatar: this.listAvatar[aIndex],
-        messages: []
-      };
-
-      this.chats.push(newChat);
-      this.newContact = '';
+        const newChat = {
+          id: (this.chats.length + 1).toString(),
+          name: this.newContact,
+          avatar: this.listAvatar[aIndex],
+          messages: []
+        };
+        this.chats.push(newChat);
+        this.newContact = '';
+      }).catch(()=>{
+        this.$message({type: 'info', message: '取消输入'}); 
+      })
     },
     deleteContact(chat) {
-      const index = this.chats.indexOf(chat);
-      if (index !== -1) {
-        this.chats.splice(index, 1);
-        if (this.activeChat === chat) {
-          this.activeChat = null;
+      this.$confirm(`此操作将永久删除对象【${chat.name}】，是否继续?`, '提示', {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        // console.log(chat.name)
+        axios.get(`/chat3_5/delete/${chat.name}.json`, {headers: this.request_headers})
+        .catch(err => {
+          console.error(err);
+        })
+        const index = this.chats.indexOf(chat);
+        if (index !== -1) {
+          this.chats.splice(index, 1);
+          if (this.activeChat === chat) {
+            this.activeChat = null;
+            // this.$message({type: 'info', message: '已删除'});     
+          }
         }
-      }
+      }).catch(() => {
+        this.$message({type: 'info', message: '已取消删除'}); 
+      })
     },
     sendChatMessage(content) {
       this.submitEnabled = false;
       this.$message({ message: '回答中...' });
+      const currentChat = this.activeChat;
+      var sysPrompt = this.system_prompt;
       var post_body = {
         "bot_name": this.activeChat.name,
         "temperature": this.temperature,
-        "sys_prompt": this.encodeContent("You are a helpful assistant."),
+        "sys_prompt": this.encodeContent(sysPrompt),
         "prompt": this.encodeContent(content)
       }
-      const currentChat = this.activeChat;
+      
       axios.post("/chat3_5", post_body, {headers: this.request_headers}).then(response => {
         var decoded = this.decodeContent(response.data.content);
         var c = { sender: currentChat.name, content: decoded, isSelf: false };
