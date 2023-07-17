@@ -19,10 +19,10 @@
         <!-- <img :src="activeChatAvatar" class="avatar" alt="Avatar" /> -->
         <span class="chat-name-header">{{ activeChatName }}</span>
       </div>
-      <div class="chat-messages">
+      <div class="chat-messages" >
         <div v-for="(message, index) in activeChatMessages" :key="index" :class="getMessageClass(message)">
           <img v-if="message.isSelf==false" :src="activeChatAvatar" class="avatar" alt="Avatar" />
-          <div class="message-content">{{ message.content }}</div>
+          <div class="message-content" > <span style="white-space: pre-wrap;"> {{ message.content }} </span></div>
         </div>
       </div>
       <div class="chat-input">
@@ -209,14 +209,16 @@ export default {
         const bot = conversations[index];
         var messages = [];
         bot.history.forEach(element => {
+          var elContent = element.content; 
+          console.log(elContent);
           if (element.role == 'user') {
-            messages.push({ sender: '自己', content: element.content, isSelf: true });
+            messages.push({ sender: '自己', content: elContent, isSelf: true });
           }
           if (element.role == 'assistant') {
-            messages.push({ sender: bot.bot_name, content: element.content, isSelf: false });
+            messages.push({ sender: bot.bot_name, content: elContent, isSelf: false });
           }
           if (element.role == 'system') {
-            messages.push({ sender: '系统', content: element.content, isSelf: true });
+            messages.push({ sender: '系统', content: elContent, isSelf: true });
           }
         });
 
