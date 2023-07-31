@@ -1,9 +1,6 @@
 import tiktoken
 
 def count_tokens(content, model_name = "gpt-3.5-turbo"):
-    # tokens = word_tokenize(content)
-    # token_count = len(tokens)
-    # return token_count
     encoding = tiktoken.encoding_for_model(model_name)
     tokens = encoding.encode(content)
     num_tokens = len(tokens)

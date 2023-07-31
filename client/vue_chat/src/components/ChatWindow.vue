@@ -210,7 +210,7 @@ export default {
         var messages = [];
         bot.history.forEach(element => {
           var elContent = element.content; 
-          console.log(elContent);
+          // console.log(elContent);
           if (element.role == 'user') {
             messages.push({ sender: '自己', content: elContent, isSelf: true });
           }

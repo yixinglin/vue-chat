@@ -7,13 +7,13 @@ from login import login
 
 app = Flask(__name__)
 
-# 登陆
+# Login
 @app.route('/login', methods=['POST'])
 def login_validate():
     data = json.loads(request.data)
     return login(**data)
 
-# 聊天
+# Chat with a chatbot.
 @app.route('/chat3_5', methods=['POST'])
 def chatgpt_request():
     data = json.loads(request.data)
@@ -22,7 +22,7 @@ def chatgpt_request():
     resp = bot.send(data["prompt"])
     return resp
 
-# 查询某个机器人的聊天记录
+# Search for the chat history of a chatbot.
 @app.route('/chat3_5/history/<bot_name>', methods=['GET'])
 def chatgpt_history_request(bot_name):
     bot = ChatBot_GPT3_5T(bot_name)
@@ -30,13 +30,13 @@ def chatgpt_history_request(bot_name):
     encoded = BaseChatBot.encodeContent(json.dumps(history, ensure_ascii=False))
     return {"data": encoded}
 
-# 获得所有聊天角色
+# Search for all chatbots 获得所有聊天角色
 @app.route('/chat3_5', methods=['GET'])
 def chatgpt_all_chatbots():
     resp = {"data": ChatBot_GPT3_5T.query_all_chatbots()}
     return resp
 
-# 获取所有对话
+# Search for all conversations.
 @app.route('/chat3_5/all_conversations', methods=['GET'])
 def chatgpt_query_all_conversations():
     bots = chatgpt_all_chatbots()

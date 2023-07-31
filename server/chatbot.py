@@ -37,12 +37,6 @@ class BaseChatBot:
             s = json.dumps(self.message_history, ensure_ascii=False)
             f.write(s)
 
-    # def delete_message_history_file(self):
-    #     if os.path.exists(self.filename):
-    #         os.remove(self.filename)
-    #     else:
-    #         raise FileNotFoundError
-
     def limit_num_messages(self, messages: List):
         retMsg = [messages[0]]  # system prompt
         messages = messages[1:]
